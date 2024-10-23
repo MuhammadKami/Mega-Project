@@ -12,7 +12,7 @@ const {storage}  = require("../cloudCOnfig.js");
 const upload = multer({ storage });
 
 // Index Route
-router.get("/", listingController.index);
+router.get("/",listingController.index);
 // New Route
 router.get("/new", isLoggedIn, listingController.new);
 

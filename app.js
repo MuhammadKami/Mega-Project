@@ -1,8 +1,8 @@
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
+const express = require('express');
 
-const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
@@ -21,7 +21,7 @@ const passport = require("passport");
 const localStrategy = require("passport-local");
 const User = require("./models/user.js");
 
-const dbURL = process.env.ATLAS_STR;
+// const dbURL = process.env.ATLAS_STR;
 main()
   .then((res) => {
     console.log("Connected to db");
@@ -36,22 +36,22 @@ async function main() {
 app.use(cookieParser());
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use(express.urlencoded({ extende: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
 const store = MongoStore.create({
-  mongoUrl: dbURL,
+  mongoUrl: "mongodb://127.0.0.1:27017/wanderlust",
   crypto: {
-    secret:process.env.SECRET,
+    secret: process.env.SECRET,
   },
   touchAfter: 24 * 3600,
 });
 
-store.on("error",(err)=>{
-  console.log("Error in mongo session",err)
-})
+store.on("error", (err) => {
+  console.log("Error in mongo session", err);
+});
 const sessionOption = {
   store,
   secret: process.env.SECRET,
@@ -91,9 +91,15 @@ app.get("/demo", async (req, res) => {
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
-  res.locals.currUser = req.user;
+  res.locals.currUser = req.user || null;
   next();
 });
+// app.use((req, res, next) => {
+//   console.log("Current User:", req.user);  // Add this line for debugging
+//   res.locals.currUser = req.user || null;
+//   next();
+// });
+
 
 app.use("/listings", Listings);
 app.use("/listings/:id/reviews", Reviews);

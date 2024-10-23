@@ -9,6 +9,7 @@ const geocodingClient = mbxGeocoding({ accessToken: maptoken });
 // Index Controller
 module.exports.index = async (req, res) => {
   const allListings = await Listing.find({});
+  console.log(req.user);
   res.render("./listings/index.ejs", { allListings });
 };
 
